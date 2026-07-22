@@ -40,6 +40,17 @@ for repo in $CONTAS; do
   fi
 done
 
+# 2.5) Plugins que fazem o Claude trabalhar melhor gastando MENOS token:
+#      claude-mem (memória entre sessões) e superpowers (skills de método).
+if command -v claude >/dev/null 2>&1; then
+  echo "🧩 Ativando plugins do time (claude-mem + superpowers)…"
+  claude plugin marketplace add thedotmack/claude-mem            >/dev/null 2>&1 || true
+  claude plugin marketplace add obra/superpowers-marketplace     >/dev/null 2>&1 || true
+  claude plugin install claude-mem@thedotmack                    >/dev/null 2>&1 || true
+  claude plugin install superpowers@superpowers-marketplace      >/dev/null 2>&1 || true
+  echo "  ✅ claude-mem e superpowers ativados"
+fi
+
 # 3) Ambiente-raiz (agentes em ~/Noha) — só monta se você é dono e tem o noha-os.
 if [ "$TEM_OS" = "1" ]; then
   mkdir -p "$HOME/Noha/.claude/agents" "$HOME/Noha/.claude/skills"
