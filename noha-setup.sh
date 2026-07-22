@@ -27,8 +27,11 @@ elif gh repo view NohaConnect/noha-os >/dev/null 2>&1; then
 fi
 
 # 2) Todas as contas (clientes) que VOCÊ tem acesso — os convites do GitHub definem isso.
+#    Usa /user/repos (repos que a SUA conta acessa) — pega até onde você é só colaborador.
 N=0
-for repo in $(gh repo list NohaConnect --limit 200 --json name --jq '.[].name' | grep '^conta-'); do
+CONTAS=$(gh api --paginate "/user/repos?per_page=100" --jq '.[].full_name' 2>/dev/null | grep '^NohaConnect/conta-' | sed 's#NohaConnect/##' | sort -u)
+[ -z "$CONTAS" ] && CONTAS=$(gh repo list NohaConnect --limit 200 --json name --jq '.[].name' 2>/dev/null | grep '^conta-')
+for repo in $CONTAS; do
   pasta="$HOME/Noha/contas/${repo#conta-}"
   if [ -d "$pasta/.git" ]; then
     git -C "$pasta" pull -q 2>/dev/null || echo "  ⚠️  $repo: pull falhou (resolver depois)"
