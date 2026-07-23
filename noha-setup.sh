@@ -59,8 +59,18 @@ if [ "$TEM_OS" = "1" ]; then
   cp -R "$HOME/Noha/os/skills/universais/." "$HOME/Noha/.claude/skills/" 2>/dev/null || true
   cp "$HOME/Noha/os/templates/ambiente/CLAUDE.md" "$HOME/Noha/CLAUDE.md"
   echo ""
+  # Produtos próprios da Noha (ferramentas da agência) — clone raso p/ não inchar.
+  mkdir -p "$HOME/Noha/produtos"
+  for par in "dash:noha-ads-manager-v2" "nohaverso:nohaverso" "content-engine:noha-content" "ai-creator:ai-creator-engine"; do
+    nome="${par%%:*}"; repo="${par##*:}"
+    if [ ! -d "$HOME/Noha/produtos/$nome/.git" ] && gh repo view "NohaConnect/$repo" >/dev/null 2>&1; then
+      git clone -q --depth 1 "https://github.com/NohaConnect/$repo.git" "$HOME/Noha/produtos/$nome" && echo "  🛠️  produto: $nome"
+    fi
+  done
+  echo ""
   echo "✅ Ambiente completo pronto em ~/Noha (você tem o cérebro noha-os)."
-  echo "   Abra o Claude Code em ~/Noha e converse — todos os agentes e contas estão ali."
+  echo "   • agentes + skills na raiz   • clientes em contas/   • ferramentas da Noha em produtos/"
+  echo "   Abra o Claude Code em ~/Noha e converse."
 else
   echo ""
   echo "✅ Suas contas estão em ~/Noha/contas/ (baixadas as que você tem acesso)."
